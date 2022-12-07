@@ -17,7 +17,7 @@ stack<string> myStack;
 void statSemantics(node* root) {
 	cout << "Made it to static semantics" << endl;
 	
-	myStack.push("This");
+	/*myStack.push("This");
 	myStack.push("is");
 	myStack.push("an");
 	myStack.push("example");
@@ -26,7 +26,9 @@ void statSemantics(node* root) {
 	cout << "Size: " << myStack.size() << endl;
 	cout << find("an") << endl;
 	cout << find("example") << endl;
-	cout << "Size: " << myStack.size() << endl;
+	cout << "Size: " << myStack.size() << endl;*/
+
+	traverse(root);
 }
 
 int find(string myStr) {
@@ -42,4 +44,8 @@ int find(string myStr) {
 		i++;
 	}
 	return firstOccurrence;
+}
+
+void traverse(node* myNode) {
+	if (myNode == NULL) return;
 }

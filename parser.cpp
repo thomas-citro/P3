@@ -96,7 +96,7 @@ void parser(vector<vector<string>>& passedTokens, string file) {
 	nextToken();
 	addSubtree(tree, block());
 	
-	//preorderTraversal(tree, 0);
+	preorderTraversal(tree, 0);
 	
 	/* Start static semantics (P3) */
 	statSemantics(tree);
