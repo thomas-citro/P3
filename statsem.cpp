@@ -99,4 +99,36 @@ void statSemanticsError(string error, string variable, int lineNumber) {
 	// "Unknown variable"
 	// "Assigning unknown variable"
 	
+	// Get error line
+	ifstream file;
+	file.open(fileName);
+	if (file.fail()) {
+		cout << "File failed to open." << endl;
+		exit(0);
+	}
+	int currentLineNumber = 0;
+	string currentLine;
+	while (!file.eof()) {
+		currentLineNumber++;
+		getline(file, currentLine);
+		if (currentLineNumber == lineNumber) break;
+	}
+	if (currentLineNumber < lineNumber) {
+		cout << "Line not found!" << endl;
+		exit(0);
+	}
+	file.close();
+	
+	// Output error
+	string message;
+	if (error == "Duplicate variable name") {
+		message = "Variable with the name '" + variable + "' already defined in this scope.";
+	} else if (error == "Unknown variable") {
+		message = "Variable with the name '" + variable + "' is not defined in this scope.";
+	} else if (error == "Assigning unknown variable") {
+		message = "Attempting to assign undeclared variable with the name '" variable "'";
+	}
+	cout << "Static Semantics Error: " << message << endl;
+	cout << "   ^ On line number " << lineNumber << ": " << currentLine;
+	exit(0);
 }
