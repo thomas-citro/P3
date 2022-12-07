@@ -8,7 +8,7 @@ CP11 = -std=c++11
 MASTER_OBJ = $(MASTER_SRC:.cpp=.o)
 OBJ	= $(SRC:.h=.o)
 
-TARGET	= P2
+TARGET	= P3
 
 OUTPUT = $(TARGET)
 all: $(OUTPUT)
