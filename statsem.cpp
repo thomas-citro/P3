@@ -47,18 +47,56 @@ int find(string myStr) {
 }
 
 void traverse(node* myNode) {
+	if (myNode == NULL) return;
+	int found;
+	int varsCount = 0;
 	if (myNode->tk->instance == "<vars>") {
 		if (myNode->first->tk->instance != "Empty") {
-			int found = find(myNode->first->tk->instance);
+			found = find(myNode->first->tk->instance);
+			if (found != -1) {
+				statSemanticsError("Duplicate variable name", myNode->first->tk->instance, myNode->first->tk->lineNum);
+			} else {
+				varsCount++;
+				myStack.push(myNode->first->tk->instance);
+			}
 			if (myNode->third->tk->instance != "Empty") {
 				traverse(myNode->third);
 			}
 		}
 	} else if (myNode->tk->instance == "<R>") {
 		if (myNode->first->tk->tokenType == "identifier") {
-			
+			found = find(myNode->first->tk->instance);
+			if (found == -1) {
+				statSemanticsError("Unknown variable", myNode->first->tk->instance, myNode->first->tk->lineNum);
+			}
+		} else {
+			traverse(myNode->first);
 		}
 	} else if (myNode->tk->instance == "<assign>") {
+		found = find(myNode->first->tk->instance);
+		if (found == -1) {
+			statSemanticsError("Assigning unknown variable", myNode->first->tk->instance, myNode->first->tk->lineNum);
+		}
+		traverse(myNode->second);
+	} else {
+		traverse(myNode->first);
+		traverse(myNode->second);
+		traverse(myNode->third);
+		traverse(myNode->fourth);
+		traverse(myNode->fifth);
+	}
+	if (varsCount != 0) {
+		while (varsCount > 0) {
+			myStack.pop();
+			varsCount--;
+		}
+	}
+}
 
-	}	
+void statSemanticsError(string error, string variable, int lineNumber) {
+	/***** Possible Errors *****/
+	// "Duplicate variable name"
+	// "Unknown variable"
+	// "Assigning unknown variable"
+	
 }
