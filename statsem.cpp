@@ -47,5 +47,18 @@ int find(string myStr) {
 }
 
 void traverse(node* myNode) {
-	if (myNode == NULL) return;
+	if (myNode->tk->instance == "<vars>") {
+		if (myNode->first->tk->instance != "Empty") {
+			int found = find(myNode->first->tk->instance);
+			if (myNode->third->tk->instance != "Empty") {
+				traverse(myNode->third);
+			}
+		}
+	} else if (myNode->tk->instance == "<R>") {
+		if (myNode->first->tk->tokenType == "identifier") {
+			
+		}
+	} else if (myNode->tk->instance == "<assign>") {
+
+	}	
 }
