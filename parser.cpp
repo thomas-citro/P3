@@ -5,6 +5,7 @@
 #include <ctype.h>
 #include "parser.h"
 #include "tree.h"
+#include "statsem.h"
 
 using namespace std;
 

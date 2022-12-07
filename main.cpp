@@ -41,7 +41,7 @@ int main(int argc, char* argv[]) {
 	if (argc == 2) {
 		fileName = argv[1];
 	} else {
-		cout << "Usage:   ./P2 [file]" << endl;
+		cout << "Usage:   ./P3 [file]" << endl;
 		exit(0);
 	}
 	

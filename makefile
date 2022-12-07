@@ -2,8 +2,8 @@ CC	= g++
 CFLAGS	= -Wall -g
 
 MASTER_SRC = main.cpp 
-SRC = parser.h tree.h
-SHARE_OBJ = parser.o tree.o
+SRC = parser.h tree.h statsem.h
+SHARE_OBJ = parser.o tree.o statsem.o
 CP11 = -std=c++11
 MASTER_OBJ = $(MASTER_SRC:.cpp=.o)
 OBJ	= $(SRC:.h=.o)
