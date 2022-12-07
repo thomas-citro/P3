@@ -80,7 +80,7 @@ void parserError(string message) {
 	
 	// Output error
 	cout << "Parser Error: " << message << endl;
-	cout << "   ^ On line number " << line << ": " << currentLine;
+	cout << "   ^ On line number " << line << ": " << currentLine << endl;
 	exit(0);
 }
 
@@ -96,10 +96,10 @@ void parser(vector<vector<string>>& passedTokens, string file) {
 	nextToken();
 	addSubtree(tree, block());
 	
-	preorderTraversal(tree, 0);
+	//preorderTraversal(tree, 0);
 	
 	/* Start static semantics (P3) */
-	statSemantics(tree);
+	statSemantics(tree, fileName);
 }
 
 // BNF: <vars> -> empty | whole Identifier := Integer ; <vars>

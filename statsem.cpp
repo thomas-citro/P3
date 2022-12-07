@@ -3,7 +3,6 @@
 #include <vector>
 #include <fstream>
 #include <ctype.h>
-//#include <deque>
 #include <stack>
 #include "parser.h"
 #include "tree.h"
@@ -13,20 +12,11 @@ using namespace std;
 
 vector<string> globals;
 stack<string> myStack;
+string fileName2;
 
-void statSemantics(node* root) {
-	cout << "Made it to static semantics" << endl;
-	
-	/*myStack.push("This");
-	myStack.push("is");
-	myStack.push("an");
-	myStack.push("example");
-	myStack.push("test");
-	
-	cout << "Size: " << myStack.size() << endl;
-	cout << find("an") << endl;
-	cout << find("example") << endl;
-	cout << "Size: " << myStack.size() << endl;*/
+
+void statSemantics(node* root, string file) {
+	fileName2 = file;
 
 	traverse(root);
 }
@@ -101,7 +91,7 @@ void statSemanticsError(string error, string variable, int lineNumber) {
 	
 	// Get error line
 	ifstream file;
-	file.open(fileName);
+	file.open(fileName2);
 	if (file.fail()) {
 		cout << "File failed to open." << endl;
 		exit(0);
@@ -126,9 +116,9 @@ void statSemanticsError(string error, string variable, int lineNumber) {
 	} else if (error == "Unknown variable") {
 		message = "Variable with the name '" + variable + "' is not defined in this scope.";
 	} else if (error == "Assigning unknown variable") {
-		message = "Attempting to assign undeclared variable with the name '" variable "'";
+		message = "Attempting to assign undeclared variable with the name '" + variable + "'";
 	}
 	cout << "Static Semantics Error: " << message << endl;
-	cout << "   ^ On line number " << lineNumber << ": " << currentLine;
+	cout << "   ^ On line number " << lineNumber << ": " << currentLine << endl;
 	exit(0);
 }
