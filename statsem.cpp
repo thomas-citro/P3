@@ -3,7 +3,8 @@
 #include <vector>
 #include <fstream>
 #include <ctype.h>
-#include <deque>
+//#include <deque>
+#include <stack>
 #include "parser.h"
 #include "tree.h"
 #include "statsem.h"
@@ -11,31 +12,34 @@
 using namespace std;
 
 vector<string> globals;
-deque<string> stack;
+stack<string> myStack;
 
 void statSemantics(node* root) {
 	cout << "Made it to static semantics" << endl;
 	
-	stack.push_front("This");
-	stack.push_front("is");
-	stack.push_front("an");
-	stack.push_front("example");
-	stack.push_front("test");
+	myStack.push("This");
+	myStack.push("is");
+	myStack.push("an");
+	myStack.push("example");
+	myStack.push("test");
 	
+	cout << "Size: " << myStack.size() << endl;
 	cout << find("an") << endl;
 	cout << find("example") << endl;
+	cout << "Size: " << myStack.size() << endl;
 }
 
 int find(string myStr) {
-	deque<string>::iterator it;
+	stack<string> tempStack = myStack;
 	int i = 0;
 	int firstOccurrence = -1;
-	for (it = stack.begin(); it != stack.end(); ++it) {
-		if (*it == myStr) {
+	while (!tempStack.empty()) {
+		if (tempStack.top() == myStr) {
 			firstOccurrence = i;
 			break;
 		}
+		tempStack.pop();
 		i++;
 	}
-	return firstOccurrence;	
+	return firstOccurrence;
 }
