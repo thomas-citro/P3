@@ -1,8 +1,6 @@
-# p3g3, redefining a variable, should be an error #
-whole yx := 5 ;
+# p3g2, this should be fine#
+whole _x := 10 ;
 program
 begin
-   whole yx := 7 ;
-   assign yx = yx * 5 - 3 + 8 / : 11 ;
-   output yx ;
+output _x ;
 end
