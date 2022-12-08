@@ -19,6 +19,7 @@ void statSemantics(node* root, string file) {
 	
 	readingGlobals = true;
 	traverse(root);
+	cout << "No errors detected" << endl;
 }
 
 int find(string myStr) {
