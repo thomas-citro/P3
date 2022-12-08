@@ -103,23 +103,23 @@ void processAssign(node* myNode) {
 
 void processVars(node* myNode, int& varsCount) {
 	node* currentNode = myNode;
-	node* varsNode;
+	node* identNode;
 	while(true) {
 		if (currentNode->tk->instance == "<vars>") {
-			varsNode = currentNode->first;
+			identNode = currentNode->first;
 		} else {
 			// This shouldn't happen
 			cout << "Unexpected error" << endl;
 		}
-		if (varsNode->tk->instance == "Empty") {
+		if (identNode->tk->instance == "Empty") {
 			break;
 		} else {
-			int found = find(varsNode->first->tk->instance);
+			int found = find(identNode->tk->instance);
 			if (found != -1) {
-				statSemanticsError("Duplicate variable name", varsNode->first->tk->instance, varsNode->first->tk->lineNum);
+				statSemanticsError("Duplicate variable name", identNode->tk->instance, identNode->tk->lineNum);
 			} else {
 				varsCount++;
-				myStack.push(varsNode->first->tk->instance);
+				myStack.push(identNode->tk->instance);
 				if (readingGlobals) varsCount--; // To keep globals on the stack
 				currentNode = currentNode->third;
 			}
