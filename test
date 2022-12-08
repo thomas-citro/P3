@@ -1,6 +1,5 @@
-# p3g2, this should be fine#
-whole _x := 10 ;
+# p3g1, this should result in an error in all options #
 program
 begin
-output _x ;
+input x ;
 end
