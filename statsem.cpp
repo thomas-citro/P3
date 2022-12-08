@@ -37,61 +37,35 @@ int find(string myStr) {
 }
 
 void traverse(node* myNode) {
-	if (myNode == NULL) {
-		return;
-	} else if (myNode->tk->instance == "Empty") {
-		return;
-	}
-	int found;
 	int varsCount = 0;
-	if (myNode->first->tk->instance == "<vars>"/* && myNode->first->first->tk->instance != "Empty"*/) {
-		cout << "Marker1" << endl;
-		node* varsNode = myNode->first;
-		while(true) {
-			if (varsNode->first->tk->instance != "Empty") {
-				cout << "Marker2" << endl;
-				found = find(varsNode->first->tk->instance);
-				if (found != -1) {
-					statSemanticsError("Duplicate variable name", varsNode->first->tk->instance, varsNode->first->tk->lineNum);
-				} else {
-					varsCount++;
-					myStack.push(varsNode->first->tk->instance);
-					if (readingGlobals) varsCount--; // To keep globals on the stack
-					varsNode = varsNode->third;
-				}
-			} else {
-				cout << "Marker3" << endl;
-				break;
-			}
-		}
-		if (readingGlobals) {
-			readingGlobals = false;
-		}
-		traverse(myNode->second);
-		traverse(myNode->third);
-		traverse(myNode->fourth);
-		traverse(myNode->fifth);
-	} else if (myNode->tk->instance == "<R>") {
-		if (myNode->first->tk->tokenType == "identifier") {
-			found = find(myNode->first->tk->instance);
-			if (found == -1) {
-				statSemanticsError("Unknown variable", myNode->first->tk->instance, myNode->first->tk->lineNum);
-			}
+	
+	// Iterate through each child
+	for (int i = 1; i < 6; i++) {
+		node* currentChild;
+		if (i == 1) {
+			currentChild = myNode->first;
+		} else if (i == 2) {
+			currentChild = myNode->second;
+		} else if (i == 3) {
+			currentChild = myNode->third;
+		} else if (i == 4) {
+			currentChild = myNode->fourth;
 		} else {
-			traverse(myNode->first);
+			currentChild = myNode->fifth;
 		}
-	} else if (myNode->tk->instance == "<assign>") {
-		found = find(myNode->first->tk->instance);
-		if (found == -1) {
-			statSemanticsError("Assigning unknown variable", myNode->first->tk->instance, myNode->first->tk->lineNum);
+		if (currentChild == NULL) continue;
+		
+		if (currentChild->tk->instance == "<vars>") {
+			processVars(currentChild, varsCount);
+		} else if (currentChild->tk->instance == "<assign>") {
+			processAssign(currentChild);
+		} else if (currentChild->tk->instance == "<in>") {
+			processInput(currentChild);
+		} else if (currentChild->tk->instance == "<R>") {
+			processR(currentChild);
+		} else if (currentChild->tk->instance != "Empty") {
+			traverse(currentChild);
 		}
-		traverse(myNode->second);
-	} else {
-		traverse(myNode->first);
-		traverse(myNode->second);
-		traverse(myNode->third);
-		traverse(myNode->fourth);
-		traverse(myNode->fifth);
 	}
 	if (varsCount != 0) {
 		while (varsCount > 0) {
@@ -101,11 +75,67 @@ void traverse(node* myNode) {
 	}
 }
 
+void processR(node* myNode) {
+	if (myNode->first->tk->tokenType == "identifier") {
+		int found = find(myNode->first->tk->instance);
+		if (found == -1) {
+			statSemanticsError("Unknown variable", myNode->first->tk->instance, myNode->first->tk->lineNum);
+		}
+	} else if (myNode->first->tk->instance == "<expr>") {
+		traverse(myNode->first);
+	}
+}
+
+void processInput(node* myNode) {
+	int found = find(myNode->first->tk->instance);
+	if (found == -1) {
+		statSemanticsError("Input unknown variable", myNode->first->tk->instance, myNode->first->tk->lineNum);
+	}
+}
+
+void processAssign(node* myNode) {
+	int found = find(myNode->first->tk->instance);
+	if (found == -1) {
+		statSemanticsError("Assigning unknown variable", myNode->first->tk->instance, myNode->first->tk->lineNum);
+	}
+	traverse(myNode->second);
+}
+
+void processVars(node* myNode, int& varsCount) {
+	node* currentNode = myNode;
+	node* varsNode;
+	while(true) {
+		if (currentNode->tk->instance == "<vars>") {
+			varsNode = currentNode->first;
+		} else {
+			// This shouldn't happen
+			cout << "Unexpected error" << endl;
+		}
+		if (varsNode->tk->instance == "Empty") {
+			break;
+		} else {
+			int found = find(varsNode->first->tk->instance);
+			if (found != -1) {
+				statSemanticsError("Duplicate variable name", varsNode->first->tk->instance, varsNode->first->tk->lineNum);
+			} else {
+				varsCount++;
+				myStack.push(varsNode->first->tk->instance);
+				if (readingGlobals) varsCount--; // To keep globals on the stack
+				currentNode = currentNode->third;
+			}
+		}
+	}
+	if (readingGlobals) {
+		readingGlobals = false;
+	}
+}
+
 void statSemanticsError(string error, string variable, int lineNumber) {
 	/***** Possible Errors *****/
 	// "Duplicate variable name"
 	// "Unknown variable"
 	// "Assigning unknown variable"
+	// "Input unknown variable"
 	
 	// Get error line
 	ifstream file;
@@ -135,6 +165,8 @@ void statSemanticsError(string error, string variable, int lineNumber) {
 		message = "Variable with the name '" + variable + "' is not defined in this scope.";
 	} else if (error == "Assigning unknown variable") {
 		message = "Attempting to assign undeclared variable with the name '" + variable + "'";
+	} else if (error == "Input unknown variable") {
+		message = "Attempting to retrieve input into undeclared variable with the name '" + variable + "'";
 	}
 	cout << "Static Semantics Error: " << message << endl;
 	cout << "   ^ On line number " << lineNumber << ": " << currentLine << endl;
