@@ -10,14 +10,14 @@
 
 using namespace std;
 
-vector<string> globals;
 stack<string> myStack;
 string fileName2;
-
+bool readingGlobals;
 
 void statSemantics(node* root, string file) {
 	fileName2 = file;
-
+	
+	readingGlobals = true;
 	traverse(root);
 }
 
@@ -48,10 +48,14 @@ void traverse(node* myNode) {
 			} else {
 				varsCount++;
 				myStack.push(myNode->first->tk->instance);
+				if (readingGlobals) varsCount--; // To keep globals on the stack
 			}
 			if (myNode->third->tk->instance != "Empty") {
 				traverse(myNode->third);
 			}
+		}
+		if (readingGlobals) {
+			readingGlobals = false;
 		}
 	} else if (myNode->tk->instance == "<R>") {
 		if (myNode->first->tk->tokenType == "identifier") {
