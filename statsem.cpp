@@ -37,26 +37,40 @@ int find(string myStr) {
 }
 
 void traverse(node* myNode) {
-	if (myNode == NULL) return;
+	if (myNode == NULL) {
+		return;
+	} else if (myNode->tk->instance == "Empty") {
+		return;
+	}
 	int found;
 	int varsCount = 0;
-	if (myNode->tk->instance == "<vars>") {
-		if (myNode->first->tk->instance != "Empty") {
-			found = find(myNode->first->tk->instance);
-			if (found != -1) {
-				statSemanticsError("Duplicate variable name", myNode->first->tk->instance, myNode->first->tk->lineNum);
+	if (myNode->first->tk->instance == "<vars>"/* && myNode->first->first->tk->instance != "Empty"*/) {
+		cout << "Marker1" << endl;
+		node* varsNode = myNode->first;
+		while(true) {
+			if (varsNode->first->tk->instance != "Empty") {
+				cout << "Marker2" << endl;
+				found = find(varsNode->first->tk->instance);
+				if (found != -1) {
+					statSemanticsError("Duplicate variable name", varsNode->first->tk->instance, varsNode->first->tk->lineNum);
+				} else {
+					varsCount++;
+					myStack.push(varsNode->first->tk->instance);
+					if (readingGlobals) varsCount--; // To keep globals on the stack
+					varsNode = varsNode->third;
+				}
 			} else {
-				varsCount++;
-				myStack.push(myNode->first->tk->instance);
-				if (readingGlobals) varsCount--; // To keep globals on the stack
-			}
-			if (myNode->third->tk->instance != "Empty") {
-				traverse(myNode->third);
+				cout << "Marker3" << endl;
+				break;
 			}
 		}
 		if (readingGlobals) {
 			readingGlobals = false;
 		}
+		traverse(myNode->second);
+		traverse(myNode->third);
+		traverse(myNode->fourth);
+		traverse(myNode->fifth);
 	} else if (myNode->tk->instance == "<R>") {
 		if (myNode->first->tk->tokenType == "identifier") {
 			found = find(myNode->first->tk->instance);
